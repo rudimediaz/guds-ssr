@@ -15,8 +15,8 @@ export default ({ children, title = "guds" }) => {
           <Sidebar />
         </div>
         <div className="col-10">
-          <div className="d-flex flex-column">
-            <div>
+          <div>
+            <div className="mb-2">
               <Header />
             </div>
             <div>{children}</div>
