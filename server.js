@@ -10,8 +10,9 @@ const handle = app.getRequestHandler();
 const db = mysql.createPool({
   host: "127.0.0.1",
   user: "root",
-  database: "lodoyo",
-  port: 3306,
+  password:"wlingi123456789",
+  database: "gudang",
+  port: 3307,
   insecureAuth: true
 });
 
