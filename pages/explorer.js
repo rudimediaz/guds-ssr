@@ -3,28 +3,35 @@ import Layout from "../components/Layout/Layout";
 import SearchForm from "../components/Explorer/SearchForm";
 import SearchResult from "../components/Explorer/SearchResult";
 import SearchNull from "../components/Explorer/SearchNull";
+import SearchSuggestion from "../components/Explorer/SearchSuggestion"
 
 export default class extends Component {
   state = {
     userInput: "",
     isSearched: false,
-    searchResult: []
+    searchResult: [],
+    searchSuggestion: []
   };
+
+  async getSuggestion(query) {
+    const searchQuery = query;
+    const result = await fetch(`/suggestion?keyword=${searchQuery}`);
+    const dataSuggestion = await result.json();
+    this.setStateAsync({ searchSuggestion: dataSuggestion }, 100);
+  }
 
   async getSearchResult() {
     const searchQuery = this.state.userInput;
     const result = await fetch(`/search?keyword=${searchQuery}`);
     const data = await result.json();
 
-    this.populateSearchResult(data);
+    // this.populateSearchResult(data);
+    this.setStateAsync({ searchResult: data, isSearched: true }, 200);
   }
 
-  populateSearchResult(data) {
+  setStateAsync(state, timeouts) {
     return new Promise((resolve, reject) => {
-      this.setState({
-        searchResult: data,
-        isSearched: true
-      });
+      setTimeout(this.setState(state), timeouts);
       const promErr = false;
       if (!promErr) {
         resolve("done");
@@ -35,10 +42,20 @@ export default class extends Component {
   }
 
   searchInputChangeHandler = ev => {
+    if (ev.target.value.length > 2) {
+      this.getSuggestion(ev.target.value);
+    }
+
     this.setState({
       userInput: ev.target.value
     });
   };
+
+  searchInputSelectHandler = val =>()=>{
+    this.setState({
+      userInput : val
+    })
+  }
 
   submitSearchHandler = () => {
     this.getSearchResult();
@@ -73,7 +90,7 @@ export default class extends Component {
         sortedData = searchData.sort((a, b) => {
           const x = a.nama;
           const y = b.nama;
-          return stringTest(sortTo, x, y);         
+          return stringTest(sortTo, x, y);
         });
         break;
       case "harga":
@@ -102,8 +119,9 @@ export default class extends Component {
   }
 
   render() {
-    console.log(this.state.searchResult);
+    console.log(this.state.searchSuggestion);
 
+    let searchSuggestion;
     let searchResult;
     if (this.state.searchResult.length >= 1) {
       searchResult = (
@@ -125,6 +143,25 @@ export default class extends Component {
     } else if (this.state.searchResult.length === 0 && this.state.isSearched) {
       searchResult = <SearchNull />;
     }
+
+    // if(this.state.searchSuggestion.length>=1){
+    //   searchSuggestion = (
+    //     <SearchSuggestion>
+         
+    //       {this.state.searchSuggestion.slice(0,8).map((item)=>{
+    //         return(
+    //           <button key={item.kdbarang} className="list-group-item list-group-item-action">{item.nama}</button>
+    //         )
+    //       })}
+
+    //     </SearchSuggestion>
+    //   )
+
+    // } else {
+    //   searchSuggestion = null;
+    // }
+
+
     return (
       <Layout>
         <div className="container">
@@ -138,6 +175,8 @@ export default class extends Component {
               submitSearch={this.submitSearchHandler}
               querySearch={this.state.userInput}
               enterPressed={this.enterPressedSearchHandler}
+              inputValue={this.state.userInput}
+              suggestion={this.state.searchSuggestion}
             />
           </div>
           <div className="flex-grow-1">{searchResult}</div>

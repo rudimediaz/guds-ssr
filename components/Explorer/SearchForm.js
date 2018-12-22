@@ -1,3 +1,5 @@
+
+
 export default props => {
   return (
     <div className="form-row mb-2">
@@ -6,9 +8,17 @@ export default props => {
           type="text"
           className="form-control"
           onChange={props.changed}
+          onChangeCapture={props.changed}
           placeholder="masukan kode barang atau nama"
           onKeyUpCapture={props.enterPressed}
+          value={props.inputValue}
+          list="itemSugs"
         />
+        <datalist id="itemSugs">{props.suggestion.slice(0,8).map(item=>{
+          return(
+            <option key={item.kdbarang} value={item.nama}>{item.nama}</option>
+          )
+        })}</datalist>
       </div>
       <div className="col">
         <button
