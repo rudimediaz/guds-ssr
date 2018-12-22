@@ -51,11 +51,12 @@ export default class extends Component {
   sortResultHandler = (col, sortTo) => () => {
     console.log("executed", col);
     const searchData = this.state.searchResult;
-    const ascTest = (x, y) => {
-      return x < y ? -1 : x > y ? 1 : 0;
-    };
-    const descTest = (x, y) => {
-      return x < y ? 1 : x > y ? -1 : 0;
+    const stringTest = (arg, x, y) => {
+      if (arg === "asc") {
+        return x < y ? -1 : x > y ? 1 : 0;
+      } else if (arg === "desc") {
+        return x < y ? 1 : x > y ? -1 : 0;
+      }
     };
 
     let sortedData;
@@ -65,45 +66,28 @@ export default class extends Component {
         sortedData = searchData.sort((a, b) => {
           const x = a.kdbarcode;
           const y = b.kdbarcode;
-          if (sortTo === "asc") {
-            return ascTest(x, y);
-          }
-          if (sortTo === "desc") {
-            return descTest(x, y);
-          }
+          return stringTest(sortTo, x, y);
         });
         break;
       case "nama":
         sortedData = searchData.sort((a, b) => {
           const x = a.nama;
           const y = b.nama;
-          return sortTo === "asc"
-            ? ascTest(x, y)
-            : sortTo === "desc"
-            ? descTest(x, y)
-            : false;
+          return stringTest(sortTo, x, y);         
         });
         break;
       case "harga":
         sortedData = searchData.sort((a, b) => {
           const x = +a.hargau;
           const y = +b.hargau;
-          return sortTo === "asc"
-            ? y-x
-            : sortTo === "desc"
-            ? x-y
-            : false;
+          return sortTo === "asc" ? y - x : sortTo === "desc" ? x - y : false;
         });
         break;
       case "qty":
         sortedData = searchData.sort((a, b) => {
           const x = +a.qty;
           const y = +b.qty;
-          return sortTo === "asc"
-            ? y-x
-            : sortTo === "desc"
-            ? x-y
-            : false;
+          return sortTo === "asc" ? y - x : sortTo === "desc" ? x - y : false;
         });
         break;
     }
@@ -129,7 +113,7 @@ export default class extends Component {
               <tr key={index}>
                 <th scope="row">{item.kdbarcode}</th>
                 <td>{item.nama}</td>
-                <td>{item.hargau.toLocaleString('id')}</td>
+                <td>{item.hargau.toLocaleString("id")}</td>
                 <td>{item.qty}</td>
               </tr>
             );
