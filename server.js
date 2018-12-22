@@ -7,14 +7,37 @@ const port = parseInt(process.env.PORT, 10) || 4500;
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
 const handle = app.getRequestHandler();
-const db = mysql.createPool({
+
+
+//=======only on development stages=======\\
+const os = require('os')
+const databaseConfig1 ={
+  host: "127.0.0.1",
+  user: "root",
+  database:"lodoyo",
+  port: 3306,
+  insecureAuth: true
+}
+const databaseConfig2 ={
   host: "127.0.0.1",
   user: "root",
   password:"wlingi123456789",
-  database: "gudang",
+  database:"gudang",
   port: 3307,
   insecureAuth: true
-});
+}
+
+const databaseEnvirontment =()=>{
+  if(os.platform()==="linux"){
+    return databaseConfig1
+  }
+  if(os.platform()==="win32"){
+    return databaseConfig2
+  }
+}
+//===========================================\\
+
+const db = mysql.createPool(databaseEnvirontment());
 
 app.prepare().then(() => {
   const server = express();
