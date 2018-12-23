@@ -174,7 +174,6 @@ export default class extends Component {
               querySearch={this.state.userInput}
               enterPressed={this.enterPressedSearchHandler}
               inputValue={this.state.userInput}
-              suggestion={this.state.searchSuggestion}
               dataList={searchSuggestion}
             />
           </div>
