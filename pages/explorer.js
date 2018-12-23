@@ -3,7 +3,7 @@ import Layout from "../components/Layout/Layout";
 import SearchForm from "../components/Explorer/SearchForm";
 import SearchResult from "../components/Explorer/SearchResult";
 import SearchNull from "../components/Explorer/SearchNull";
-import SearchSuggestion from "../components/Explorer/SearchSuggestion"
+import SearchSuggestion from "../components/Explorer/SearchSuggestion";
 
 export default class extends Component {
   state = {
@@ -42,20 +42,22 @@ export default class extends Component {
   }
 
   searchInputChangeHandler = ev => {
-    if (ev.target.value.length > 2) {
-      this.getSuggestion(ev.target.value);
-    }
-
     this.setState({
       userInput: ev.target.value
     });
   };
 
-  searchInputSelectHandler = val =>()=>{
+  autocompleteCapturer = ev => {
+    if (ev.target.value.length > 2) {
+      this.getSuggestion(ev.target.value);
+    }
+  };
+
+  searchInputSelectHandler = val => () => {
     this.setState({
-      userInput : val
-    })
-  }
+      userInput: val
+    });
+  };
 
   submitSearchHandler = () => {
     this.getSearchResult();
@@ -144,24 +146,19 @@ export default class extends Component {
       searchResult = <SearchNull />;
     }
 
-    // if(this.state.searchSuggestion.length>=1){
-    //   searchSuggestion = (
-    //     <SearchSuggestion>
-         
-    //       {this.state.searchSuggestion.slice(0,8).map((item)=>{
-    //         return(
-    //           <button key={item.kdbarang} className="list-group-item list-group-item-action">{item.nama}</button>
-    //         )
-    //       })}
-
-    //     </SearchSuggestion>
-    //   )
-
-    // } else {
-    //   searchSuggestion = null;
-    // }
-
-
+    if (this.state.searchSuggestion.length > 8) {
+      searchSuggestion = this.state.searchSuggestion
+        .slice(0, 8)
+        .map((item, index) => (
+          <option key={item.kdbarang} value={item.nama} data-id={index + 1} />
+        ));
+    } else if (this.state.searchSuggestion.length <= 8) {
+      searchSuggestion = this.state.searchSuggestion.map((item, index) => (
+        <option key={item.kdbarang} value={item.nama} data-id={index + 1} />
+      ));
+    } else if (this.state.searchSuggestion.length === 0) {
+      searchSuggestion = <option value="......" />;
+    }
     return (
       <Layout>
         <div className="container">
@@ -172,11 +169,13 @@ export default class extends Component {
           <div className="mb-5">
             <SearchForm
               changed={this.searchInputChangeHandler}
+              captureChanged={this.autocompleteCapturer}
               submitSearch={this.submitSearchHandler}
               querySearch={this.state.userInput}
               enterPressed={this.enterPressedSearchHandler}
               inputValue={this.state.userInput}
               suggestion={this.state.searchSuggestion}
+              dataList={searchSuggestion}
             />
           </div>
           <div className="flex-grow-1">{searchResult}</div>
