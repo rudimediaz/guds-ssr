@@ -1,9 +1,19 @@
-import Link from 'next/link'
-export default () => {
-  return (
-  <nav className="navbar navbar-expand-lg navbar-light bg-light">
-    <Link href='/'><a className="navbar-brand">Guds</a></Link>
+import Link from "next/link";
 
-  </nav>
+export default (props) => {
+  return (
+    <nav className="navbar-dark bg-dark">
+    <div className="d-flex row">
+    <button type="button" className="navbar btn btn-dark mr-3" data-toggle="collapse" onClick={props.clicked}>
+        <i className="navbar-toggler-icon" />
+      </button>
+      <Link href="/">
+        <a className="navbar-brand">Guds</a>
+      </Link>
+    
+    </div>
+
+     
+    </nav>
   );
 };
